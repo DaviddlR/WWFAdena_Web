@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title> APP </title>
+
+        <script src="{{ url_for('static', filename='javascript.js') }}"></script> 
+        <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        
+
+    </head>
+
+    <body onload="empezarEjecucion()">
+        <h1> Procesando datos </h1>
+
+        <p id="mensajeTarea">...</p>
+
+
+        <script src="{{ url_for('static', filename='oneko/oneko.js') }}"></script>
+    </body>
+
+</html>
