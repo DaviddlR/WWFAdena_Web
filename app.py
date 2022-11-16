@@ -3,8 +3,8 @@ from flask import Flask, render_template, request, jsonify
 from pathlib import Path
 import os
 import tensorflow as tf
-import keras
-import keras.backend as K
+import tensorflow.keras.backend as K
+
 import numpy as np
 
 # WLS - En window 11 viene por defecto.
@@ -15,15 +15,16 @@ import time
 
 # Código
 from codigo.EstadoEjecucion import *
+from codigo.DescarteVacias.Correntropy import *
 
 # Variables globales
 
-# Separador. Windows = \\ Linux = /
-# TODO: Creo que no hace falta para rutas dentro del proyecto
-sp = ""
 separadorPickerDirectory = "/"
+sp = ""
 
 urlBase = str(os.path.expanduser("~"))
+
+# TODO: URL destino será carpeta temporal (check TODO list)
 if "\\" in urlBase:
     print("Windows")
     urlDestino = urlBase + "\\Airesultados"
@@ -39,20 +40,15 @@ modelos_AE = ["AE_cluster0.h5", "AE_cluster1.h5", "AE_cluster2.h5", "AE_cluster3
 modeloClasificadora = "MLP_2_20_150_Cluster.h5"
 
 
-## Funciones auxiliares
-# Correntropy
-tf_2pi = tf.constant(tf.sqrt(2*np.pi), dtype=tf.float32)
+# Parámetros de configuración recogidos del formulario y estado de la ejecución
+# TODO: ¿Crear una clase para cada tipo de ejecución? (descarte, segmentación...)? O usar herencia??
+estadoEjecucion = EstadoEjecucion()
 
-def robust_kernel(alpha, sigma = 0.2):
-    return 1 / (tf_2pi * sigma) * K.exp(-1 * K.square(alpha) / (2 * sigma * sigma))
-
-def correntropy(y_true, y_pred):
-    return -1 * K.sum(robust_kernel(y_pred - y_true))
 
 
 # Creación de la APP
 app = Flask(__name__)
-estadoEjecucion = EstadoEjecucion()
+
 
 # Página principal (acceder a URL)
 @app.route("/")
@@ -64,28 +60,47 @@ def pantallaPrincipal():
 # Recibe los datos del formulario
 @app.route('/procesando', methods=["POST", "GET"])
 def procesando():
-    if request.method == "POST":
-        form_data = request.form
-        ocultoDirectorio = form_data["Oculto"]
-        print(ocultoDirectorio)
 
-        # TODO: Las separaciones en linux =! Windows. Detectar el SO y actuar en consecuencia.
+    # Recopilamos datos del formulario y lo almacenamos en EstadoEjecucion
+    if request.method == "POST":
+
+        datosFormulario = request.form
+
+        # Datos completos del formulario
+        estadoEjecucion.formularioCompleto = datosFormulario
+
+        # Carpeta de imágenes
+        ocultoDirectorio = request.form["Oculto"]
         directorio = ocultoDirectorio.split(separadorPickerDirectory)[0]
+        estadoEjecucion.rutaOrigen = urlBase + sp + directorio
+
+        # Carpeta donde se almacenarán los resultados
+        estadoEjecucion.rutaDestino = urlDestino
+
+        # Check si almacenar dudosas
+        if "dudosas" in estadoEjecucion.formularioCompleto:
+            estadoEjecucion.dudosas = True
+        else:
+            estadoEjecucion.dudosas = False
 
         print("Resumen del form")
-        print(form_data)
+        print(datosFormulario)
         print("Ruta origen: ", urlBase + "\\" + directorio)
         print("Ruta destino: ", urlDestino)
+
+        
+
+        
 
         # Si el directorio no está creado, lo creamos
         # if not os.path.exists(urlDestino):
         #     os.mkdir(urlDestino)
         
         
-        if "dudosas" in form_data:
-            print("Dudosas")
-        else:
-            print("No dudosas")
+        # if "dudosas" in form_data:
+        #     print("Dudosas")
+        # else:
+        #     print("No dudosas")
 
     print(urlBase)
     
@@ -124,9 +139,9 @@ def getEstadoTarea():
 def tareaLarga():
 
     modelos = []
-    for i in range(7):
+    for i in range(1):
         estadoEjecucion.mensaje = "Cargando modelo " + str(i)
-        model = keras.models.load_model(urlModelos + modelos_AE[i], custom_objects={"correntropy" : correntropy})
+        model = tf.keras.models.load_model(urlModelos + modelos_AE[i], custom_objects={"correntropy" : correntropy})
         modelos.append(model)
     
     
