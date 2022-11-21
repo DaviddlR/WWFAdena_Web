@@ -2,8 +2,7 @@
 from flask import Flask, render_template, request, jsonify
 from pathlib import Path
 import os
-import tensorflow as tf
-import tensorflow.keras.backend as K
+
 
 import numpy as np
 
@@ -16,6 +15,7 @@ import time
 # Código
 from codigo.EstadoEjecucion import *
 from codigo.DescarteVacias.Correntropy import *
+from codigo.DescarteVacias.DescarteVacias import comenzarDescarteVacias
 
 # Variables globales
 
@@ -64,48 +64,13 @@ def procesando():
     # Recopilamos datos del formulario y lo almacenamos en EstadoEjecucion
     if request.method == "POST":
 
-        datosFormulario = request.form
-
-        # Datos completos del formulario
-        estadoEjecucion.formularioCompleto = datosFormulario
-
-        # Carpeta de imágenes
-        ocultoDirectorio = request.form["Oculto"]
-        directorio = ocultoDirectorio.split(separadorPickerDirectory)[0]
-        estadoEjecucion.rutaOrigen = urlBase + sp + directorio
-
-        # Carpeta donde se almacenarán los resultados
-        estadoEjecucion.rutaDestino = urlDestino
-
-        # Check si almacenar dudosas
-        if "dudosas" in estadoEjecucion.formularioCompleto:
-            estadoEjecucion.dudosas = True
-        else:
-            estadoEjecucion.dudosas = False
-
-        print("Resumen del form")
-        print(datosFormulario)
-        print("Ruta origen: ", urlBase + "\\" + directorio)
-        print("Ruta destino: ", urlDestino)
-
-        
-
-        
-
-        # Si el directorio no está creado, lo creamos
-        # if not os.path.exists(urlDestino):
-        #     os.mkdir(urlDestino)
-        
-        
-        # if "dudosas" in form_data:
-        #     print("Dudosas")
-        # else:
-        #     print("No dudosas")
-
-    print(urlBase)
-    
+        estadoEjecucion.adjuntarFormulario(request.form)
+        estadoEjecucion.mostrarEstado()    
 
     return render_template('procesando.html')
+
+
+
 
 # Función para comenzar la ejecución. Inicia nuevo hilo.
 @app.route("/comenzarTarea", methods=["POST"])
@@ -114,11 +79,11 @@ def empezarTareaLarga():
     hilo = threading.Thread(target=lambda: tareaLarga())
     hilo.start()
 
-    # Inicializamos datos
-    estadoEjecucion.estado = "INICIADA"
-
-    #return jsonify({}), 202, {'url':'/estadoTarea'}
     return {"url":"/estadoTarea"}
+
+# PROCESO EN SEGUNDO PLANO
+def tareaLarga():
+    comenzarDescarteVacias(estadoEjecucion)
 
 # Función para comprobar el estado de la tarea y actualizar mensajes.
 @app.route("/estadoTarea")
@@ -134,35 +99,6 @@ def getEstadoTarea():
     # Devuelve toda la info
     return jsonify(respuesta)
 
-
-# PROCESO EN SEGUNDO PLANO
-def tareaLarga():
-
-    modelos = []
-    for i in range(1):
-        estadoEjecucion.mensaje = "Cargando modelo " + str(i)
-        model = tf.keras.models.load_model(urlModelos + modelos_AE[i], custom_objects={"correntropy" : correntropy})
-        modelos.append(model)
-    
-    
-
-    print("Durmiendo...")
-    estadoEjecucion.mensaje = "Durmiendo..."
-    time.sleep(40)
-
-    for modeloAE in modelos:
-        print(modeloAE.summary())
-
-    estadoEjecucion.estado = "FINALIZADO"
-    print("Ejecutando cosas")
-    estadoEjecucion.mensaje = "Ejecutando cosas"
-    time.sleep(5)
-    print("ya casi esta...")
-    estadoEjecucion.mensaje = "Ya casi esta..."
-    time.sleep(5)
-    print("Hecho")
-    estadoEjecucion.mensaje = "Hecho :D"
-    estadoEjecucion.estado = "FINALIZADO"
 
 # MAIN
 if __name__ == '__main__':
