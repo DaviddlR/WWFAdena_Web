@@ -9,6 +9,7 @@ class EstadoEjecucion:
         self.formularioCompleto = ""
         self.tarea = ""
         self.version = ""
+        self.sp = ""  # Este separador es dependiente del SO
 
         # Parámetros de ejecución para descarte de imágenes vacías.
         self.rutaOrigen = ""
@@ -34,18 +35,17 @@ class EstadoEjecucion:
     def adjuntarFormulario(self, formulario):
 
         # Configuracion inicial
-        sp = ""
 
         urlBase = str(os.path.expanduser("~"))
 
         if "\\" in urlBase:
             print("Windows")
             urlDestino = urlBase + "\\Airesultados"
-            sp = "\\"
+            self.sp = "\\"
         else:
             print("Linux")
             urlDestino = urlBase + "/Airesultados"
-            sp = "/"
+            self.sp = "/"
 
 
         # Formulario completo
@@ -59,8 +59,8 @@ class EstadoEjecucion:
 
         # Carpeta de imágenes
         ocultoDirectorio = formulario["Oculto"]
-        directorio = ocultoDirectorio.split("/")[0]
-        self.rutaOrigen = urlBase + sp + directorio
+        directorio = ocultoDirectorio.split("/")[0]  # Este separador es independiente del SO
+        self.rutaOrigen = urlBase + self.sp + directorio
 
         # Carpeta donde se almacenarán los resultados
         self.rutaDestino = urlDestino

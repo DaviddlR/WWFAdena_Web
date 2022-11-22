@@ -19,21 +19,6 @@ from codigo.DescarteVacias.DescarteVacias import comenzarDescarteVacias
 
 # Variables globales
 
-separadorPickerDirectory = "/"
-sp = ""
-
-urlBase = str(os.path.expanduser("~"))
-
-# TODO: URL destino será carpeta temporal (check TODO list)
-if "\\" in urlBase:
-    print("Windows")
-    urlDestino = urlBase + "\\Airesultados"
-    sp = "\\"
-else:
-    print("Linux")
-    urlDestino = urlBase + "/Airesultados"
-    sp = "/"
-
 urlModelos = "./Modelos_Entrenados/"
 modeloKmeans = "kmeansServidor.pkl"
 modelos_AE = ["AE_cluster0.h5", "AE_cluster1.h5", "AE_cluster2.h5", "AE_cluster3.h5", "AE_cluster4.h5", "AE_cluster5.h5", "AE_cluster6.h5"]
