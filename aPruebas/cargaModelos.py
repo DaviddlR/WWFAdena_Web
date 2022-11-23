@@ -34,6 +34,32 @@ except Exception as e:
                 model = tf.keras.models.load_model(urlModelos + modelos_AE[i], custom_objects={"correntropy" : correntropy})
                 print("Fin carga modelo")
 
+# Fase 1 -> Cargar un modelo y ver si se puede usar GPU
+cpu = False
+if tf.test.is_gpu_available(cuda_only=True):
+    
+    try:
+        model = tf.keras.models.load_model(urlModelos + modelos_AE[i], custom_objects={"correntropy" : correntropy})
+        #TODO: Cargar imagen y usarlo.
+
+
+    except Exception as e:
+        if e.__class__.__name__ == "ResourceExhaustedError":
+            cpu = False
+
+else:
+    cpu = True
+
+if cpu:
+    # Usa CPU
+    with tf.device('/CPU:0'):
+        model = tf.keras.models.load_model(urlModelos + modelos_AE[0], custom_objects={"correntropy" : correntropy})
+        print(model.summary())
+else:
+    # Usa GPU
+    model = tf.keras.models.load_model(urlModelos + modelos_AE[0], custom_objects={"correntropy" : correntropy})
+    print(model.summary())
+
 
 # OPCION 2 -> Comprobar si hay espacio antes de hacer nada.
 # Import os to set the environment variable CUDA_VISIBLE_DEVICES

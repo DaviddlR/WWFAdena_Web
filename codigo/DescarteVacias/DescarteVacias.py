@@ -7,6 +7,7 @@ import tempfile
 
 # Código
 from codigo.DescarteVacias.Clustering import *
+from codigo.DescarteVacias.Autoencoder import *
 
 # TODO: Aquí creo que debería ir la creación de directorios temporales
 # TODO: Esta función comienza y acaba la ejecución. Modificar estado
@@ -21,11 +22,11 @@ def comenzarDescarteVacias(estadoEjecucion):
     print('Carpeta temporal ', carpetaTemporal)
 
     # Preprocesamiento + clustering
-    #TODO: 
     clustering(estadoEjecucion, carpetaTemporal)
 
     # Autoencoders + clasificación
     #TODO:
+    autoencoders(estadoEjecucion, carpetaTemporal)
     
 
     # Finalizamos la ejecución
