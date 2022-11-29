@@ -16,6 +16,7 @@ def comenzarDescarteVacias(estadoEjecucion):
 
     # Inicializamos datos
     estadoEjecucion.estado = "INICIADA"
+    estadoEjecucion.estado = "FINALIZADO" #TODO: Borrar esto
     estadoEjecucion.mensaje = "Comenzando la ejecución"
 
     carpetaTemporal = tempfile.TemporaryDirectory()

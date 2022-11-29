@@ -2,9 +2,11 @@
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
+import os
+from skimage.metrics import structural_similarity as ssim
 
 # Código
-from DescarteVacias.Correntropy import correntropy
+from codigo.DescarteVacias.Correntropy import correntropy
 #from skimage.metrics import structural_similarity as ssim
 
 # Variables globales
@@ -26,14 +28,16 @@ def calcularMSE(original, reconstruccion):
 def calcularMAE(original, reconstruccion):
     return np.mean(np.abs(original.astype("float") - reconstruccion.astype("float")))
 
-# def calcularSSIM(original, reconstruccion):
-#     print(original.shape)
-#     return ssim(original, reconstruccion, channel_axis=2)
+def calcularSSIM(original, reconstruccion):
+    return ssim(original, reconstruccion, channel_axis=2)
 
 
 
 
 def autoencoders(estadoEjecucion, carpetaTemporal):
+
+    carpetaTemporal = carpetaTemporal.name
+
     # Comprobamos si se puede usar GPU
     cpu = checkGPU()
 
@@ -59,15 +63,16 @@ def aplicarClasificacion(carpetaTemporal):
     # Para cada cluster -> AEFinalTest.py
     # https://stackoverflow.com/questions/41715025/keras-flowfromdirectory-get-file-names-as-they-are-being-generated 
     for cluster in range(numClusters):
+        print("INICIO CLUSTER ", cluster)
 
-        # Cargar modelo AE.
-        autoencoder = tf.keras.models.load_model(urlModelos + modelos_AE[cluster], custom_objects={"correntropy" : correntropy})
+        # Cargamos imágenes
+        carpetaImagenes = os.path.join(carpetaTemporal, str(cluster))
+        print(carpetaImagenes)
 
-        #TODO: Cargar imágenes de la carpeta
         dataset = ImageDataGenerator(rescale=1./255, data_format='channels_last')
 
         carpeta = dataset.flow_from_directory(
-            carpetaTemporal + str(cluster),  #TODO: Creo que esto está mal
+            carpetaImagenes,
             target_size = (IMG_HEIGHT, IMG_WIDTH),
             batch_size=1,
             class_mode=None,
@@ -76,34 +81,69 @@ def aplicarClasificacion(carpetaTemporal):
         )
 
         contador = 0
-        while contador < carpeta.n:
 
-            # Aplicamos Autoencoders
-            original = carpeta.next()
-            prediccion = autoencoder.predict(original)
+        # Si hay imágenes asignadas a ese cluster...
+        if carpeta.n > 0:
 
-            contador += 1
+            # Hay imágenes -> cargamos Autoencoder
+            autoencoder = tf.keras.models.load_model(urlModelos + modelos_AE[cluster], custom_objects={"correntropy" : correntropy})
+            
+            # Nombres de archivos
+            filepath_carpeta = carpeta.filenames
+            filepath = list()
+            for file in filepath_carpeta:
+                file = file.split("\\")[1]
+                filepath.append(file)
 
-            #TODO: Calcular errores
+            # Predicciones hasta que no haya más imagenes
+            while contador < carpeta.n:
 
-            #TODO: Aplicar clasificador
+                # Aplicamos Autoencoders
+                original = carpeta.next()
+                prediccion = autoencoder.predict(original)
 
-            #TODO: Check si dudosas
+                # https://stackoverflow.com/questions/41715025/keras-flowfromdirectory-get-file-names-as-they-are-being-generated 
 
-            #TODO: Mover imagen original a carpeta correspondiente
+                # Hallamos errores.
+                msi = calcularMSE(original[0], prediccion[0])
+                mae = calcularMAE(original[0], prediccion[0])
+                valor_ssim = calcularSSIM(original[0], prediccion[0])
+
+                # Guardamos resultados
+                resultadosImagen = [msi, mae, valor_ssim, cluster]
+                resultadosImagen = [resultadosImagen]
+
+                # Aplicar clasificador
+                prediccionClasificador = clasificador.predict(resultadosImagen)
+                print(filepath[contador])
+                print(prediccionClasificador)
+
+                #TODO: Check si dudosas
+
+                #TODO: Mover imagen original a carpeta correspondiente
+
+
+                contador += 1
+
+        print("FIN CLUSTER ", cluster)
+
+
+        
+        
     
 
 def checkGPU():
     cpu = False
+
     if tf.test.is_gpu_available(cuda_only=True):
-        
+
         try:
             model = tf.keras.models.load_model(urlModelos + modelos_AE[0], custom_objects={"correntropy" : correntropy})
             #TODO: Cargar imagen y usarlo.
 
         except Exception as e:
             if e.__class__.__name__ == "ResourceExhaustedError":
-                cpu = False
+                cpu = True
 
     else:
         cpu = True

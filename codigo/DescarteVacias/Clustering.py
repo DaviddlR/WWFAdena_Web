@@ -55,6 +55,22 @@ def clustering(estadoEjecucion, carpetaTemporal):
     os.mkdir(cluster5)
     os.mkdir(cluster6)
 
+    cluster0 = os.path.join(cluster0, "imgs")
+    cluster1 = os.path.join(cluster1, "imgs")
+    cluster2 = os.path.join(cluster2, "imgs")
+    cluster3 = os.path.join(cluster3, "imgs")
+    cluster4 = os.path.join(cluster4, "imgs")
+    cluster5 = os.path.join(cluster5, "imgs")
+    cluster6 = os.path.join(cluster6, "imgs")
+
+    os.mkdir(cluster0)
+    os.mkdir(cluster1)
+    os.mkdir(cluster2)
+    os.mkdir(cluster3)
+    os.mkdir(cluster4)
+    os.mkdir(cluster5)
+    os.mkdir(cluster6)
+
     # Cargar modelo Kmeans (kmeansPRUEBA.ipynb)
     kmeansModel = pickle.load(open(rutaModeloKmeans, "rb"))
     centroids = kmeansModel.cluster_centers_
@@ -94,13 +110,8 @@ def clustering(estadoEjecucion, carpetaTemporal):
             crop = resizedImg[x0:x1, y0:y1]
 
             # Una vez tenemos el indice del cluster, copiar la imagen
-            rutaClusterImagen = os.path.join(carpetaTemporal, str(indiceCluster),name)
+            rutaClusterImagen = os.path.join(carpetaTemporal, str(indiceCluster),"imgs",name)
             cv.imwrite(rutaClusterImagen + name, crop)
-
-
-    
-
-    time.sleep(120)
 
 
 
