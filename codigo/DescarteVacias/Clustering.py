@@ -111,7 +111,8 @@ def clustering(estadoEjecucion, carpetaTemporal):
 
             # Una vez tenemos el indice del cluster, copiar la imagen
             rutaClusterImagen = os.path.join(carpetaTemporal, str(indiceCluster),"imgs",name)
-            cv.imwrite(rutaClusterImagen + name, crop)
+            
+            cv.imwrite(rutaClusterImagen, crop)
 
 
 

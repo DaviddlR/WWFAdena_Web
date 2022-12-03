@@ -4,6 +4,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 import os
 from skimage.metrics import structural_similarity as ssim
+import shutil
+import time
 
 # Código
 from codigo.DescarteVacias.Correntropy import correntropy
@@ -46,16 +48,16 @@ def autoencoders(estadoEjecucion, carpetaTemporal):
         # Usa CPU
         print("USA CPU")
         with tf.device('/CPU:0'):
-            aplicarClasificacion(carpetaTemporal)
+            aplicarClasificacion(estadoEjecucion, carpetaTemporal)
     else:
         # Usa GPU
         print("USA GPU")
-        aplicarClasificacion(carpetaTemporal)
+        aplicarClasificacion(estadoEjecucion, carpetaTemporal)
 
 
 
 
-def aplicarClasificacion(carpetaTemporal):
+def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
     # Cargar clasificador
     clasificador = tf.keras.models.load_model(urlModelos + modeloClasificador)
@@ -67,7 +69,7 @@ def aplicarClasificacion(carpetaTemporal):
 
         # Cargamos imágenes
         carpetaImagenes = os.path.join(carpetaTemporal, str(cluster))
-        print(carpetaImagenes)
+        
 
         dataset = ImageDataGenerator(rescale=1./255, data_format='channels_last')
 
@@ -82,6 +84,8 @@ def aplicarClasificacion(carpetaTemporal):
 
         contador = 0
 
+        
+
         # Si hay imágenes asignadas a ese cluster...
         if carpeta.n > 0:
 
@@ -90,9 +94,14 @@ def aplicarClasificacion(carpetaTemporal):
             
             # Nombres de archivos
             filepath_carpeta = carpeta.filenames
+            print(filepath_carpeta)
             filepath = list()
             for file in filepath_carpeta:
-                file = file.split("\\")[1]
+                #print(file)
+                file = file.split("\\")
+                #print(file)
+                file = file[1]
+                #print(file)
                 filepath.append(file)
 
             # Predicciones hasta que no haya más imagenes
@@ -100,6 +109,11 @@ def aplicarClasificacion(carpetaTemporal):
 
                 # Aplicamos Autoencoders
                 original = carpeta.next()
+                rutaIMG = os.path.join(estadoEjecucion.rutaOrigen, filepath[contador])
+                # print(estadoEjecucion.rutaOrigen)
+                # print(filepath[contador])
+                # print(rutaIMG)
+
                 prediccion = autoencoder.predict(original)
 
                 # https://stackoverflow.com/questions/41715025/keras-flowfromdirectory-get-file-names-as-they-are-being-generated 
@@ -115,10 +129,29 @@ def aplicarClasificacion(carpetaTemporal):
 
                 # Aplicar clasificador
                 prediccionClasificador = clasificador.predict(resultadosImagen)
-                print(filepath[contador])
-                print(prediccionClasificador)
+                prediccionClasificador = prediccionClasificador[0]
+                
 
-                #TODO: Check si dudosas
+                # Check si dudosas
+                if estadoEjecucion.dudosas:
+                    umbral = estadoEjecucion.umbralDudosas
+                    if prediccionClasificador[1] > umbral:
+                        # Mover a carpeta vacio
+                        shutil.move(rutaIMG, estadoEjecucion.rutaVacio)
+                        
+                    elif prediccionClasificador[0] > umbral:
+                        # Mover a carpeta animales
+                        shutil.move(rutaIMG, estadoEjecucion.rutaAnimales)
+                    else:
+                        # Mover a carpeta dudosas
+                        shutil.move(rutaIMG, estadoEjecucion.rutaDudosas)
+                else:
+                    if prediccionClasificador[0] < prediccionClasificador[1]:  # [0,1] Vacio
+                        # Mover a carpeta vacio
+                        shutil.move(rutaIMG, estadoEjecucion.rutaVacio)
+                    else:                                          # [1,0] Animales
+                        # Mover a carpeta animales
+                        shutil.move(rutaIMG, estadoEjecucion.rutaAnimales)
 
                 #TODO: Mover imagen original a carpeta correspondiente
 

@@ -14,6 +14,9 @@ class EstadoEjecucion:
         # Parámetros de ejecución para descarte de imágenes vacías.
         self.rutaOrigen = ""
         self.rutaDestino = ""
+        self.rutaAnimales = ""
+        self.rutaVacio = ""
+        self.rutaDudosas = ""
         self.dudosas = False
         self.umbralDudosas = 0
 
@@ -47,6 +50,20 @@ class EstadoEjecucion:
             urlDestino = urlBase + "/Airesultados"
             self.sp = "/"
 
+        # Creamos carpetas de resultados
+        rutaAnimales = os.path.join(urlDestino, "Animales")
+        rutaVacio = os.path.join(urlDestino, "Vacio")
+        rutaDudosas = os.path.join(urlDestino, "Dudosas")
+
+        # TODO: Comprobar que no exista ya
+        os.mkdir(urlDestino)
+        os.mkdir(rutaAnimales)
+        os.mkdir(rutaVacio)
+        os.mkdir(rutaDudosas)
+
+        self.rutaAnimales = rutaAnimales
+        self.rutaVacio = rutaVacio
+        self.rutaDudosas = rutaDudosas
 
         # Formulario completo
         self.formularioCompleto = formulario
