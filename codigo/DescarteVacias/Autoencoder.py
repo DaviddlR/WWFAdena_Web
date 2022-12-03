@@ -38,6 +38,8 @@ def calcularSSIM(original, reconstruccion):
 
 def autoencoders(estadoEjecucion, carpetaTemporal):
 
+    estadoEjecucion.mensajeClasificacion = "Clasificando imágenes"
+
     carpetaTemporal = carpetaTemporal.name
 
     # Comprobamos si se puede usar GPU
@@ -84,6 +86,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
         contador = 0
 
+        estadoEjecucion.mensajeClasificacion = "Analizando grupo " + str(cluster + 1)
         
 
         # Si hay imágenes asignadas a ese cluster...
@@ -104,14 +107,15 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                 #print(file)
                 filepath.append(file)
 
+            i = 0
             # Predicciones hasta que no haya más imagenes
-            while contador < carpeta.n:
+            while i < carpeta.n:
 
                 # Aplicamos Autoencoders
                 original = carpeta.next()
-                rutaIMG = os.path.join(estadoEjecucion.rutaOrigen, filepath[contador])
+                rutaIMG = os.path.join(estadoEjecucion.rutaOrigen, filepath[i])
                 # print(estadoEjecucion.rutaOrigen)
-                # print(filepath[contador])
+                # print(filepath[i])
                 # print(rutaIMG)
 
                 prediccion = autoencoder.predict(original)
@@ -156,11 +160,14 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                 #TODO: Mover imagen original a carpeta correspondiente
 
 
+                i += 1
                 contador += 1
+                estadoEjecucion.actualizarBarraClasificacion(contador)
 
         print("FIN CLUSTER ", cluster)
 
 
+    estadoEjecucion.mensajeClasificacion = "Hecho!"
         
         
     

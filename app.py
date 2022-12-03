@@ -27,12 +27,14 @@ modeloClasificadora = "MLP_2_20_150_Cluster.h5"
 
 # Parámetros de configuración recogidos del formulario y estado de la ejecución
 # TODO: ¿Crear una clase para cada tipo de ejecución? (descarte, segmentación...)? O usar herencia??
-estadoEjecucion = EstadoEjecucion()
+
 
 
 
 # Creación de la APP
 app = Flask(__name__)
+
+estadoEjecucion = EstadoEjecucion()
 
 
 # Página principal (acceder a URL)
@@ -49,6 +51,7 @@ def procesando():
     # Recopilamos datos del formulario y lo almacenamos en EstadoEjecucion
     if request.method == "POST":
 
+        estadoEjecucion.__init__()
         estadoEjecucion.adjuntarFormulario(request.form)
         estadoEjecucion.mostrarEstado()    
 
@@ -75,11 +78,14 @@ def tareaLarga():
 def getEstadoTarea():
 
     # Obtiene el estado de la tarea
-    mensaje = estadoEjecucion.mensaje
+    mensajeClustering = estadoEjecucion.mensajeClustering
+    mensajeClasificacion = estadoEjecucion.mensajeClasificacion
+    barraClustering = str(estadoEjecucion.barraClustering)
+    barraClasificacion = str(estadoEjecucion.barraClasificacion)
     estado = estadoEjecucion.estado
-    progreso = estadoEjecucion.progreso
 
-    respuesta = {'estado':estado, "mensaje":mensaje, "progreso":progreso}
+    respuesta = {'estado':estado, "mensajeClustering":mensajeClustering, "mensajeClasificacion":mensajeClasificacion,
+     "barraClustering":barraClustering, "barraClasificacion":barraClasificacion}
 
     # Devuelve toda la info
     return jsonify(respuesta)

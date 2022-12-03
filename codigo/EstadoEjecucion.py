@@ -10,6 +10,7 @@ class EstadoEjecucion:
         self.tarea = ""
         self.version = ""
         self.sp = ""  # Este separador es dependiente del SO
+        self.imagenesTotales = 0
 
         # Parámetros de ejecución para descarte de imágenes vacías.
         self.rutaOrigen = ""
@@ -22,9 +23,12 @@ class EstadoEjecucion:
 
 
         # Estado de ejecución
-        self.mensaje = "..."
+        self.mensajeClustering = "..."
+        self.mensajeClasificacion = "..."
+        self.barraClustering = 0
+        self.barraClasificacion = 0
         self.estado = "..."
-        self.progreso = 0
+
 
     def mostrarEstado(self):
         print("\nESTADO")
@@ -88,4 +92,21 @@ class EstadoEjecucion:
             self.umbralDudosas = float(formulario["umbralDudosas"])
         else:
             self.dudosas = False
+
+
+        # Calculamos el número de imágenes
+        contador = 0
+        for root, dirs, files in os.walk(self.rutaOrigen, topdown=False):
+            for name in files:
+                
+                contador += 1
+
+        self.imagenesTotales = contador
+
+    
+    def actualizarBarraClustering(self, numImagenes):
+        self.barraClustering = int((100 * numImagenes) / self.imagenesTotales)
+
+    def actualizarBarraClasificacion(self, numImagenes):
+        self.barraClasificacion = int((100 * numImagenes) / self.imagenesTotales)
     

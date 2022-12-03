@@ -16,8 +16,8 @@ def comenzarDescarteVacias(estadoEjecucion):
 
     # Inicializamos datos
     estadoEjecucion.estado = "INICIADA"
-    estadoEjecucion.estado = "FINALIZADO" #TODO: Borrar esto
-    estadoEjecucion.mensaje = "Comenzando la ejecución"
+    estadoEjecucion.mensajeClustering = "Comenzando la ejecución"
+    estadoEjecucion.mensajeClasificacion = "Esperando agrupamiento"
 
     carpetaTemporal = tempfile.TemporaryDirectory()
     print('Carpeta temporal ', carpetaTemporal)
@@ -31,5 +31,7 @@ def comenzarDescarteVacias(estadoEjecucion):
     
 
     # Finalizamos la ejecución
+    #estadoEjecucion.estado = "FINALIZADO"
+    print(estadoEjecucion.estado)
+
     estadoEjecucion.estado = "FINALIZADO"
-    

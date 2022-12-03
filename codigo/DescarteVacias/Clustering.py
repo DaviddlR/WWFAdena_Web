@@ -34,6 +34,7 @@ y1 = 388
 
 def clustering(estadoEjecucion, carpetaTemporal):
 
+    estadoEjecucion.mensajeClustering = "Agrupando imágenes"
 
     # Crear 7 carpetas dentro de carpeta temporal, una por cluster
     sp = estadoEjecucion.sp
@@ -77,8 +78,9 @@ def clustering(estadoEjecucion, carpetaTemporal):
     print(centroids.shape)
     print(centroids)
 
+    
 
-    #TODO: Procesamos cada imagen y la asignamos a un cluster
+    # Procesamos cada imagen y la asignamos a un cluster
     contador = 0
     for root, dirs, files in os.walk(estadoEjecucion.rutaOrigen, topdown=False):
         for name in files:
@@ -114,7 +116,9 @@ def clustering(estadoEjecucion, carpetaTemporal):
             
             cv.imwrite(rutaClusterImagen, crop)
 
+            estadoEjecucion.actualizarBarraClustering(contador)
 
+    estadoEjecucion.mensajeClustering = "Hecho!"
 
 
 # Escalar una imagen a una anchura y altura dada
