@@ -66,6 +66,8 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
     # Para cada cluster -> AEFinalTest.py
     # https://stackoverflow.com/questions/41715025/keras-flowfromdirectory-get-file-names-as-they-are-being-generated 
+    contador = 0
+
     for cluster in range(numClusters):
         print("INICIO CLUSTER ", cluster)
 
@@ -84,7 +86,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
             seed=42
         )
 
-        contador = 0
+        
 
         estadoEjecucion.mensajeClasificacion = "Analizando grupo " + str(cluster + 1)
         
