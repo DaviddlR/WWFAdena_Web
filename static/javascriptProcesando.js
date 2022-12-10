@@ -49,6 +49,9 @@ function actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, bar
             setTimeout(function(){
                 actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion)
             }, 500)
+        } else {
+            // La ejecución ha finalizado
+            document.getElementById("botonVolver").disabled = false;
         }
     })
     

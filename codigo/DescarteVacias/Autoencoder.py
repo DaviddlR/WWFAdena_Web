@@ -38,7 +38,7 @@ def calcularSSIM(original, reconstruccion):
 
 def autoencoders(estadoEjecucion, carpetaTemporal):
 
-    estadoEjecucion.mensajeClasificacion = "Clasificando imágenes"
+    estadoEjecucion.mensajeClasificacion = "Analizando si se puede utilizar GPU"
 
     carpetaTemporal = carpetaTemporal.name
 
@@ -48,15 +48,15 @@ def autoencoders(estadoEjecucion, carpetaTemporal):
     # El código es idéntico si usa GPU o CPU. Solo cambia el dispositivo a utilizar
     if cpu:
         # Usa CPU
-        print("USA CPU")
+        estadoEjecucion.usaGPU = "CPU"
         with tf.device('/CPU:0'):
             aplicarClasificacion(estadoEjecucion, carpetaTemporal)
     else:
         # Usa GPU
-        print("USA GPU")
+        estadoEjecucion.usaGPU = "GPU"
         aplicarClasificacion(estadoEjecucion, carpetaTemporal)
 
-
+    time.sleep(5)
 
 
 def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
@@ -88,7 +88,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
         
 
-        estadoEjecucion.mensajeClasificacion = "Analizando grupo " + str(cluster + 1)
+        estadoEjecucion.mensajeClasificacion = "Analizando grupo " + str(cluster + 1) + "/7 - " + estadoEjecucion.usaGPU
         
 
         # Si hay imágenes asignadas a ese cluster...

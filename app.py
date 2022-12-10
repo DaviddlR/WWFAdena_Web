@@ -63,7 +63,6 @@ def procesando():
 # Función para comenzar la ejecución. Inicia nuevo hilo.
 @app.route("/comenzarTarea", methods=["POST"])
 def empezarTareaLarga():
-    print("Comienza tarea larga")
     hilo = threading.Thread(target=lambda: tareaLarga())
     hilo.start()
 

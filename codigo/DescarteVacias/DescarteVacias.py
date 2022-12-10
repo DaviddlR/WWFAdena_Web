@@ -23,10 +23,10 @@ def comenzarDescarteVacias(estadoEjecucion):
     print('Carpeta temporal ', carpetaTemporal)
 
     # Preprocesamiento + clustering
-    #clustering(estadoEjecucion, carpetaTemporal)
+    clustering(estadoEjecucion, carpetaTemporal)
 
     # Autoencoders + clasificación
-    #autoencoders(estadoEjecucion, carpetaTemporal)
+    autoencoders(estadoEjecucion, carpetaTemporal)
     
 
     # Finalizamos la ejecución

@@ -27,6 +27,7 @@ class EstadoEjecucion:
         self.mensajeClasificacion = "..."
         self.barraClustering = 0
         self.barraClasificacion = 0
+        self.usaGPU = "..."
         self.estado = "..."
 
 
@@ -41,18 +42,23 @@ class EstadoEjecucion:
 
     def adjuntarFormulario(self, formulario):
 
+        #TODO: Dependiendo de la tarea elegida se hará un procesamiento u otro
+
         # Configuracion inicial
+        nombreCarpetaDestino = "Airesultados"
 
         urlBase = str(os.path.expanduser("~"))
 
-        if "\\" in urlBase:
-            print("Windows")
-            urlDestino = urlBase + "\\Airesultados"
-            self.sp = "\\"
-        else:
-            print("Linux")
-            urlDestino = urlBase + "/Airesultados"
-            self.sp = "/"
+        urlDestino = os.path.join(urlBase, nombreCarpetaDestino)
+
+        # if "\\" in urlBase:
+        #     print("Windows")
+        #     urlDestino = urlBase + "\\Airesultados"
+        #     self.sp = "\\"
+        # else:
+        #     print("Linux")
+        #     urlDestino = urlBase + "/Airesultados"
+        #     self.sp = "/"
 
         # Creamos carpetas de resultados
         rutaAnimales = os.path.join(urlDestino, "Animales")
@@ -61,9 +67,10 @@ class EstadoEjecucion:
 
         # TODO: Comprobar que no exista ya
         os.mkdir(urlDestino)
+
         os.mkdir(rutaAnimales)
         os.mkdir(rutaVacio)
-        os.mkdir(rutaDudosas)
+        
 
         self.rutaAnimales = rutaAnimales
         self.rutaVacio = rutaVacio
@@ -76,12 +83,11 @@ class EstadoEjecucion:
         self.tarea = formulario["modelo"]
         self.version = formulario["version"]
 
-        # TODO: Rellenar formulario según la tarea que sea. Por ahora solo descarte vacías.
-
         # Carpeta de imágenes
         ocultoDirectorio = formulario["Oculto"]
         directorio = ocultoDirectorio.split("/")[0]  # Este separador es independiente del SO
-        self.rutaOrigen = urlBase + self.sp + directorio
+        self.rutaOrigen = os.path.join(urlBase, directorio)
+        #self.rutaOrigen = urlBase + self.sp + directorio
 
         # Carpeta donde se almacenarán los resultados
         self.rutaDestino = urlDestino
@@ -89,6 +95,7 @@ class EstadoEjecucion:
         # Check si almacenar dudosas
         if "dudosas" in formulario:
             self.dudosas = True
+            os.mkdir(rutaDudosas)
             self.umbralDudosas = float(formulario["umbralDudosas"])
         else:
             self.dudosas = False
