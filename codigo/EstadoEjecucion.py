@@ -1,6 +1,7 @@
 # Clase que representará el estado de ejecución.
 # Intercambiar información entre el hilo y app
 import os
+from datetime import datetime
 
 class EstadoEjecucion:
     def __init__(self):
@@ -29,6 +30,8 @@ class EstadoEjecucion:
         self.barraClasificacion = 0
         self.usaGPU = "..."
         self.estado = "..."
+        self.ejecucionEnCurso = False
+        self.interrumpirEjecucion = False
 
 
     def mostrarEstado(self):
@@ -40,16 +43,49 @@ class EstadoEjecucion:
         print("Dudosas: ", self.dudosas)
         print("Umbral: ", self.umbralDudosas)
 
+    def generarTXT(self):
+        a = 1
+        # Tarea
+
+        # Versión del modelo
+
+        # Ruta de origen de las imágenes
+
+        # Ruta de destino de las imágenes
+
+        # Mover o copiar imágenes
+
+        # Umbral de dudosas. Si no hay dudosas, poner un guion.
+
+        # Uso o no de GPU
+
+        # Tiempo de ejecución????
+
     def adjuntarFormulario(self, formulario):
 
         #TODO: Dependiendo de la tarea elegida se hará un procesamiento u otro
 
-        # Configuracion inicial
-        nombreCarpetaDestino = "Airesultados"
-
+        # Ruta del usuario
         urlBase = str(os.path.expanduser("~"))
 
-        urlDestino = os.path.join(urlBase, nombreCarpetaDestino)
+        # Modelo a utilizar
+        self.tarea = formulario["modelo"]
+        self.version = formulario["version"]
+
+        # Carpeta origen de imágenes
+        ocultoDirectorio = formulario["Oculto"]
+        directorio = ocultoDirectorio.split("/")[0]  # Este separador es independiente del SO
+        self.rutaOrigen = os.path.join(urlBase, directorio)
+        #self.rutaOrigen = urlBase + self.sp + directorio
+
+        # Carpeta donde se almacenarán los resultados
+        now = datetime.now()
+        fechaActual = now.strftime("%d-%m-%Y__%H-%M-%S")	
+        nombreCarpetaDestino = "zResultados_" + self.tarea.replace(" ","") + "_" + fechaActual
+        urlDestino = os.path.join(self.rutaOrigen, nombreCarpetaDestino)
+
+        self.rutaDestino = urlDestino
+        
 
         # if "\\" in urlBase:
         #     print("Windows")
@@ -78,19 +114,6 @@ class EstadoEjecucion:
 
         # Formulario completo
         self.formularioCompleto = formulario
-
-        # Modelo a utilizar
-        self.tarea = formulario["modelo"]
-        self.version = formulario["version"]
-
-        # Carpeta de imágenes
-        ocultoDirectorio = formulario["Oculto"]
-        directorio = ocultoDirectorio.split("/")[0]  # Este separador es independiente del SO
-        self.rutaOrigen = os.path.join(urlBase, directorio)
-        #self.rutaOrigen = urlBase + self.sp + directorio
-
-        # Carpeta donde se almacenarán los resultados
-        self.rutaDestino = urlDestino
 
         # Check si almacenar dudosas
         if "dudosas" in formulario:

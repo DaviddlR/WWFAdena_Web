@@ -11,6 +11,7 @@ function validarFormulario(){
         // Modificamos el campo oculto para añadir el nombre del directorio
         document.getElementById("oculto").value = nombreDirectorio
         puedeEnviar = true
+        a = true
      } else {
         alert("Debes seleccionar el directorio donde se encuentran las imágenes")
      }
@@ -18,5 +19,27 @@ function validarFormulario(){
     return puedeEnviar
     
 }  
+
+// window.onpageshow = function(evt) {
+//     // If persisted then it is in the page cache, force a reload of the page.
+//     if (evt.persisted) {
+//         alert("reload")
+//         document.body.style.display = "none";
+//         location.reload();
+//     }
+// };
+
+
+
+// (function () {
+// 	window.onpageshow = function(event) {
+// 		if (event.persisted) {
+//             alert("AAAAA");
+// 			window.location.reload();
+            
+// 		}
+// 	};
+// })();
+
 
 

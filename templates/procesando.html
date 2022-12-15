@@ -20,6 +20,7 @@
     <body>
         
         <div class="login-page">
+            <input type="checkbox" id="abc" onmouseover="myFunction()">
             <div class="form">
                 <h1 style="text-align: center">Procesando datos</h1>
                 <hr>
@@ -54,8 +55,10 @@
                 <br>
                 <br>
                 
-                <input id="botonVolver" type="submit" value="Volver" onclick="history.back()" disabled>
-
+                <!-- <input id="botonVolver" type="submit" value="Volver" onclick="history.back()" disabled> -->
+                <a href="{{ url_for('pantallaPrincipal') }}">
+                    <input id="botonVolver" type="submit" value="Volver" disabled>
+                </a>
             </div>
         </div>
 
@@ -64,6 +67,7 @@
 
         <script src="{{ url_for('static', filename='javascriptProcesando.js') }}"></script> 
         <!-- <script src="{{ url_for('static', filename='oneko/oneko.js') }}"></script> -->
+        
     </body>
 
 </html>

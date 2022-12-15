@@ -24,6 +24,8 @@ modeloKmeans = "kmeansServidor.pkl"
 modelos_AE = ["AE_cluster0.h5", "AE_cluster1.h5", "AE_cluster2.h5", "AE_cluster3.h5", "AE_cluster4.h5", "AE_cluster5.h5", "AE_cluster6.h5"]
 modeloClasificadora = "MLP_2_20_150_Cluster.h5"
 
+# Hilo que controla la ejecución de tareas largas
+
 
 # Parámetros de configuración recogidos del formulario y estado de la ejecución
 # TODO: ¿Crear una clase para cada tipo de ejecución? (descarte, segmentación...)? O usar herencia??
@@ -36,10 +38,22 @@ app = Flask(__name__)
 
 estadoEjecucion = EstadoEjecucion()
 
+estadoEjecucion.ejecucionEnCurso = False
+
 
 # Página principal (acceder a URL)
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def pantallaPrincipal():
+    print("Entramos en panalla principal")
+
+    # La ejecucion ha sido interrumpida
+    if estadoEjecucion.ejecucionEnCurso:
+        # Hay que parar la ejecucion
+        estadoEjecucion.interrumpirEjecucion = True
+        print("------------ INTERRUMPIMOS EJECUCION ---------------")
+
+
+
     return render_template("principal.html")
 
 
@@ -61,10 +75,14 @@ def procesando():
 
 
 # Función para comenzar la ejecución. Inicia nuevo hilo.
+# NOTA: En este punto el formulario de estadoEjecución está completo
 @app.route("/comenzarTarea", methods=["POST"])
 def empezarTareaLarga():
+
+    # TODO: empezar un hilo u otro según la tarea.
     hilo = threading.Thread(target=lambda: tareaLarga())
     hilo.start()
+    
 
     return {"url":"/estadoTarea"}
 

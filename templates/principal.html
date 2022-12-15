@@ -14,10 +14,14 @@
 
     </head>
 
+
     <body>
+        <input type="hidden" id="refresh" value="no">
         <div class="login-page">
             <div class="form">
                 <h1 style="text-align: center">Selección de parámetros</h1><br>
+
+                
 
                 <!-- <span>&#10003;</span> -->
                 
@@ -61,8 +65,8 @@
 
                     <div id="dudosasChecked" style="display: none">
                         <p class="pSinMargen">Umbral 
-                            <button class="btn" type="button" data-toggle="popover" title="Umbral de imágenes dudosas" data-content="Probabilidad a partir de la que una imagen deja de ser dudosa y se asigna a una categoría (vacía o con animales)"><i class="bi bi-info-circle"></i></button>
-
+                            <button class="btn" type="button" data-toggle="popover" data-trigger="hover" title="Umbral de imágenes dudosas" data-content="Probabilidad por encima de la cual una imagen deja de ser dudosa y se asigna a una categoría"><i class="bi bi-info-circle"></i></button>
+                            
                         </p>
                         
                         <input type="number" id="umbralDudosas" name="umbralDudosas" value="0.5" min="0.5" max="1" step=".05">
@@ -76,7 +80,7 @@
 
                     
                     
-                    <p><input type="submit" value="Enviar"></p>
+                    <p><input type="submit" value="Comenzar"></p>
         
                 </form>
             </div>

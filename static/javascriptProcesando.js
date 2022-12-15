@@ -11,7 +11,6 @@ document.addEventListener('readystatechange', event => {
         var barraClasificacion = document.getElementById("progressbarClasificacion")
 
         console.log("--EmpezarEjecucion")
-        
 
         // Enviamos mensajea la direccion /comenzarTarea (ver app.py)
 
@@ -21,6 +20,51 @@ document.addEventListener('readystatechange', event => {
     }
     
  });
+
+
+
+var _hash = "!";
+var noBackPlease = function () {
+    console.log("noback")
+    window.location.href += "#";
+
+    // making sure we have the fruit available for juice....
+    // 50 milliseconds for just once do not cost much (^__^)
+    window.setTimeout(function () {
+        window.location.href += "!";
+    }, 50);
+};
+
+//Earlier we had setInerval here....
+window.onhashchange = function () {
+    if (window.location.hash !== _hash) {
+        window.location.hash = _hash;
+    }
+};
+
+window.onload = function () {
+    
+    noBackPlease();
+}
+
+
+//  $(window).on("keypress", function (e){
+//     if(e.keycode == "backspace") 
+//          e.preventDefault();
+// })
+
+//  window.addEventListener("beforeunload", function(event) {
+//     console.log("UNLOAD:1");
+//     //event.preventDefault();
+//     event.returnValue = "AA"; //"Any text"; //true; //false;
+//     //return null; //"Any text"; //true; //false;
+//   });
+
+// document.addEventListener('visibilitychange', function logData() {
+//     if (document.visibilityState === 'hidden') {
+//       alert("No te vallas")
+//     }
+//   });
 
 
 //TODO: Vuelve a ejecutarse solo si la tarea no ha terminado
@@ -37,11 +81,11 @@ function actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, bar
         barraClustering.setAttribute("style", "width: " + res["barraClustering"] + "%")
         barraClasificacion.setAttribute("style", "width: " + res["barraClasificacion"] + "%")
 
-        if (res['mensajeClustering'] == "Hecho!"){
+        if (res['mensajeClustering'] == "¡Hecho!"){
             document.getElementById("loadingClustering").style.display = "none";
         }
 
-        if (res['mensajeClasificacion'] == "Hecho!"){
+        if (res['mensajeClasificacion'] == "¡Hecho!"){
             document.getElementById("loadingClasificacion").style.display = "none";
         }
 

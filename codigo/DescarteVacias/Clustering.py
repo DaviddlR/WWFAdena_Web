@@ -83,8 +83,13 @@ def clustering(estadoEjecucion, carpetaTemporal):
     # Procesamos cada imagen y la asignamos a un cluster
     contador = 0
     for root, dirs, files in os.walk(estadoEjecucion.rutaOrigen, topdown=False):
+        if estadoEjecucion.interrumpirEjecucion:
+            break
+
         for name in files:
-            
+            if estadoEjecucion.interrumpirEjecucion:
+                break
+
             contador += 1
 
             # Obtenemos la ruta de la imagen
@@ -118,7 +123,7 @@ def clustering(estadoEjecucion, carpetaTemporal):
 
             estadoEjecucion.actualizarBarraClustering(contador)
 
-    estadoEjecucion.mensajeClustering = "Hecho!"
+    estadoEjecucion.mensajeClustering = "¡Hecho!"
 
 
 # Escalar una imagen a una anchura y altura dada

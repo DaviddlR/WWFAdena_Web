@@ -69,6 +69,10 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
     contador = 0
 
     for cluster in range(numClusters):
+
+        if estadoEjecucion.interrumpirEjecucion:
+            break
+
         print("INICIO CLUSTER ", cluster)
 
         # Cargamos imágenes
@@ -111,7 +115,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
             i = 0
             # Predicciones hasta que no haya más imagenes
-            while i < carpeta.n:
+            while i < carpeta.n and not estadoEjecucion.interrumpirEjecucion:
 
                 # Aplicamos Autoencoders
                 original = carpeta.next()
@@ -169,7 +173,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
         print("FIN CLUSTER ", cluster)
 
 
-    estadoEjecucion.mensajeClasificacion = "Hecho!"
+    estadoEjecucion.mensajeClasificacion = "¡Hecho!"
         
         
     
