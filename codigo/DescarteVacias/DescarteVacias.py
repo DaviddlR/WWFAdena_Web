@@ -1,6 +1,7 @@
 # Imports
 import os
 import time
+import datetime
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import tempfile
@@ -12,6 +13,8 @@ from codigo.DescarteVacias.Autoencoder import *
 # TODO: Aquí creo que debería ir la creación de directorios temporales
 # TODO: Esta función comienza y acaba la ejecución. Modificar estado
 def comenzarDescarteVacias(estadoEjecucion):
+    start_time = time.time()
+
     print("Descartando vacias...")
 
     # Inicializamos datos
@@ -27,12 +30,16 @@ def comenzarDescarteVacias(estadoEjecucion):
     clustering(estadoEjecucion, carpetaTemporal)
 
     # Autoencoders + clasificación
-    autoencoders(estadoEjecucion, carpetaTemporal)
-
-    # TODO: Estado ejecución -> generarTXT
-    
+    autoencoders(estadoEjecucion, carpetaTemporal)    
 
     # Finalizamos la ejecución
-
     estadoEjecucion.ejecucionEnCurso = False
+    
+
+    end_time = time.time()
+
+    sec = round(end_time - start_time)
+    tiempo = str(datetime.timedelta(seconds=sec))
+    estadoEjecucion.generarTXT(tiempo)
+    
     estadoEjecucion.estado = "FINALIZADO"

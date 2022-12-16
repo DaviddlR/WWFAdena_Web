@@ -33,7 +33,7 @@ y1 = 388
 
 
 def clustering(estadoEjecucion, carpetaTemporal):
-
+    
     estadoEjecucion.mensajeClustering = "Agrupando imágenes"
 
     # Crear 7 carpetas dentro de carpeta temporal, una por cluster
@@ -83,45 +83,46 @@ def clustering(estadoEjecucion, carpetaTemporal):
     # Procesamos cada imagen y la asignamos a un cluster
     contador = 0
     for root, dirs, files in os.walk(estadoEjecucion.rutaOrigen, topdown=False):
-        if estadoEjecucion.interrumpirEjecucion:
-            break
 
         for name in files:
-            if estadoEjecucion.interrumpirEjecucion:
-                break
 
-            contador += 1
+            
 
             # Obtenemos la ruta de la imagen
             rutaIMG = os.path.join(root, name)
-            img = cv.imread(rutaIMG)
 
-            # Preprocesamiento: Reducir tamaño
-            resizedImg = rescaleFrame(img, 384, 288)
+            # Evitamos las imágenes que se han procesado en otras ejecuciones
+            if not "AAA_Resultados_" in rutaIMG:
+                contador += 1
 
-            # Modificamos espacio de color
-            #resizedImg = cv.cvtColor(resizedImg, cv.COLOR_BGR2RGB)
+                img = cv.imread(rutaIMG)
 
-            # Calcular histograma y normalizar
-            histograma_test = cv.calcHist([img], channels, None, hist_size, ranges, accumulate = False)
-            cv.normalize(histograma_test, histograma_test, alpha = 0, beta = 1, norm_type = cv.NORM_MINMAX)
+                # Preprocesamiento: Reducir tamaño
+                resizedImg = rescaleFrame(img, 384, 288)
 
-            histograma_test = histograma_test.reshape(r_bins*g_bins*b_bins)
-            histograma_test = histograma_test.reshape(1,-1)
+                # Modificamos espacio de color --> NO
+                #resizedImg = cv.cvtColor(resizedImg, cv.COLOR_BGR2RGB)
 
-            # Aplicar clustering
-            indiceCluster = kmeansModel.predict(histograma_test)[0]
-            print("Indice cluster: ", indiceCluster)
+                # Calcular histograma y normalizar
+                histograma_test = cv.calcHist([img], channels, None, hist_size, ranges, accumulate = False)
+                cv.normalize(histograma_test, histograma_test, alpha = 0, beta = 1, norm_type = cv.NORM_MINMAX)
 
-            # Segundo preprocesamiento (cortar barra inferior)
-            crop = resizedImg[x0:x1, y0:y1]
+                histograma_test = histograma_test.reshape(r_bins*g_bins*b_bins)
+                histograma_test = histograma_test.reshape(1,-1)
 
-            # Una vez tenemos el indice del cluster, copiar la imagen
-            rutaClusterImagen = os.path.join(carpetaTemporal, str(indiceCluster),"imgs",name)
-            
-            cv.imwrite(rutaClusterImagen, crop)
+                # Aplicar clustering
+                indiceCluster = kmeansModel.predict(histograma_test)[0]
+                print("Indice cluster: ", indiceCluster)
 
-            estadoEjecucion.actualizarBarraClustering(contador)
+                # Segundo preprocesamiento (cortar barra inferior)
+                crop = resizedImg[x0:x1, y0:y1]
+
+                # Una vez tenemos el indice del cluster, copiar la imagen
+                rutaClusterImagen = os.path.join(carpetaTemporal, str(indiceCluster),"imgs",name)
+                
+                cv.imwrite(rutaClusterImagen, crop)
+
+                estadoEjecucion.actualizarBarraClustering(contador)
 
     estadoEjecucion.mensajeClustering = "¡Hecho!"
 

@@ -32,7 +32,6 @@ class EstadoEjecucion:
         self.usaGPU = "..."
         self.estado = "..."
         self.ejecucionEnCurso = False
-        self.interrumpirEjecucion = False
 
 
     def mostrarEstado(self):
@@ -44,23 +43,47 @@ class EstadoEjecucion:
         print("Dudosas: ", self.dudosas)
         print("Umbral: ", self.umbralDudosas)
 
-    def generarTXT(self):
+    def generarTXT(self, tiempoEjecucion):
         a = 1
+        rutaTXT = os.path.join(self.rutaDestino, "Resumen_Ejecucion.txt")
+
+        f = open(rutaTXT, "w")
+
         # Tarea
+        f.write("Tarea: " + self.tarea + "\n")
 
         # Versión del modelo
+        f.write("Versión: " + self.version + "\n")
 
         # Ruta de origen de las imágenes
+        f.write("Ruta de origen: " + self.rutaOrigen + "\n")
 
         # Ruta de destino de las imágenes
+        f.write("Ruta de destino: " + self.rutaDestino + "\n")
 
         # Mover o copiar imágenes
+        if self.moverIMG:
+            f.write("Mover imágenes \n")
+        else:
+            f.write("Copiar imágenes \n")
 
-        # Umbral de dudosas. Si no hay dudosas, poner un guion.
-
+        # Almacenar o no dudosas
+        if self.dudosas:
+            f.write("Almacenar imágenes dudosas \n")
+            f.write("Umbral: " + str(self.umbralDudosas) + "\n")
+        else:
+            f.write("No almacenar imágenes dudosas \n")
+        
         # Uso o no de GPU
+        f.write("Modo de ejecución: " + self.usaGPU + "\n")
+
+        # Número de imágenes
+        f.write("Número de imágenes: " + str(self.imagenesTotales) + "\n")
 
         # Tiempo de ejecución????
+        f.write("Tiempo de ejecución: " + tiempoEjecucion + "\n")
+
+        f.close()
 
     def adjuntarFormulario(self, formulario):
 
@@ -82,7 +105,7 @@ class EstadoEjecucion:
         # Carpeta donde se almacenarán los resultados
         now = datetime.now()
         fechaActual = now.strftime("%d-%m-%Y__%H-%M-%S")	
-        nombreCarpetaDestino = "zResultados_" + self.tarea.replace(" ","") + "_" + fechaActual
+        nombreCarpetaDestino = "AAA_Resultados_" + self.tarea.replace(" ","") + "_" + fechaActual
         urlDestino = os.path.join(self.rutaOrigen, nombreCarpetaDestino)
 
         self.rutaDestino = urlDestino
@@ -135,10 +158,14 @@ class EstadoEjecucion:
         contador = 0
         for root, dirs, files in os.walk(self.rutaOrigen, topdown=False):
             for name in files:
-                
-                contador += 1
+
+                rutaIMG = os.path.join(root, name)
+
+                if not "AAA_Resultados_" in rutaIMG:
+                    contador += 1
 
         self.imagenesTotales = contador
+        print(contador)
 
     
     def actualizarBarraClustering(self, numImagenes):

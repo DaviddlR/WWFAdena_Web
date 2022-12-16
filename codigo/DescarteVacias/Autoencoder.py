@@ -73,9 +73,6 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
     for cluster in range(numClusters):
 
-        if estadoEjecucion.interrumpirEjecucion:
-            break
-
         print("INICIO CLUSTER ", cluster)
 
         # Cargamos imágenes
@@ -118,7 +115,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
             i = 0
             # Predicciones hasta que no haya más imagenes
-            while i < carpeta.n and not estadoEjecucion.interrumpirEjecucion:
+            while i < carpeta.n:
 
                 # Aplicamos Autoencoders
                 original = carpeta.next()
@@ -150,18 +147,18 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                     umbral = estadoEjecucion.umbralDudosas
                     if prediccionClasificador[1] > umbral:
                         # Mover a carpeta vacio
-                        moverImagen(rutaIMG, estadoEjecucion.rutaVacio)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaVacio, mover)
                         
                     elif prediccionClasificador[0] > umbral:
                         # Mover a carpeta animales
-                        moverImagen(rutaIMG, estadoEjecucion.rutaAnimales)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaAnimales, mover)
                     else:
                         # Mover a carpeta dudosas
-                        moverImagen(rutaIMG, estadoEjecucion.rutaDudosas)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaDudosas, mover)
                 else:
                     if prediccionClasificador[0] < prediccionClasificador[1]:  # [0,1] Vacio
                         # Mover a carpeta vacio
-                        moverImagen(rutaIMG, estadoEjecucion.rutaVacio)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaVacio, mover)
                     else:                                          # [1,0] Animales
                         # Mover a carpeta animales
                         moverImagen(rutaIMG, estadoEjecucion.rutaAnimales, mover)
