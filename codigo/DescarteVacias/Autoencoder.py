@@ -61,6 +61,9 @@ def autoencoders(estadoEjecucion, carpetaTemporal):
 
 def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
 
+    mover = estadoEjecucion.moverIMG
+
+
     # Cargar clasificador
     clasificador = tf.keras.models.load_model(urlModelos + modeloClasificador)
 
@@ -147,21 +150,21 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                     umbral = estadoEjecucion.umbralDudosas
                     if prediccionClasificador[1] > umbral:
                         # Mover a carpeta vacio
-                        shutil.move(rutaIMG, estadoEjecucion.rutaVacio)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaVacio)
                         
                     elif prediccionClasificador[0] > umbral:
                         # Mover a carpeta animales
-                        shutil.move(rutaIMG, estadoEjecucion.rutaAnimales)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaAnimales)
                     else:
                         # Mover a carpeta dudosas
-                        shutil.move(rutaIMG, estadoEjecucion.rutaDudosas)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaDudosas)
                 else:
                     if prediccionClasificador[0] < prediccionClasificador[1]:  # [0,1] Vacio
                         # Mover a carpeta vacio
-                        shutil.move(rutaIMG, estadoEjecucion.rutaVacio)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaVacio)
                     else:                                          # [1,0] Animales
                         # Mover a carpeta animales
-                        shutil.move(rutaIMG, estadoEjecucion.rutaAnimales)
+                        moverImagen(rutaIMG, estadoEjecucion.rutaAnimales, mover)
 
                 #TODO: Mover imagen original a carpeta correspondiente
 
@@ -176,7 +179,11 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
     estadoEjecucion.mensajeClasificacion = "¡Hecho!"
         
         
-    
+def moverImagen(origen, destino, mover):
+    if mover:
+        shutil.move(origen, destino)
+    else:
+        shutil.copy2(origen, destino)
 
 def checkGPU():
     cpu = False

@@ -19,6 +19,7 @@ class EstadoEjecucion:
         self.rutaAnimales = ""
         self.rutaVacio = ""
         self.rutaDudosas = ""
+        self.moverIMG = False
         self.dudosas = False
         self.umbralDudosas = 0
 
@@ -114,6 +115,12 @@ class EstadoEjecucion:
 
         # Formulario completo
         self.formularioCompleto = formulario
+
+        # Check si copiar o mover
+        if formulario['moverimg'] == 'copiar':
+            self.moverIMG = False
+        else:
+            self.moverIMG = True
 
         # Check si almacenar dudosas
         if "dudosas" in formulario:
