@@ -100,6 +100,10 @@ class EstadoEjecucion:
         ocultoDirectorio = formulario["Oculto"]
         directorio = ocultoDirectorio.split("/")[0]  # Este separador es independiente del SO
         self.rutaOrigen = os.path.join(urlBase, directorio)
+
+        if not os.path.isdir(self.rutaOrigen):
+            return False
+
         #self.rutaOrigen = urlBase + self.sp + directorio
 
         # Carpeta donde se almacenarán los resultados
@@ -166,6 +170,8 @@ class EstadoEjecucion:
 
         self.imagenesTotales = contador
         print(contador)
+
+        return True
 
     
     def actualizarBarraClustering(self, numImagenes):

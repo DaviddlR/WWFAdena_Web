@@ -63,13 +63,18 @@ def pantallaPrincipal():
 def procesando():
 
     # Recopilamos datos del formulario y lo almacenamos en EstadoEjecucion
+    todoCorrecto = False
+
     if request.method == "POST":
 
         estadoEjecucion.__init__()
-        estadoEjecucion.adjuntarFormulario(request.form)
+        todoCorrecto = estadoEjecucion.adjuntarFormulario(request.form)
         estadoEjecucion.mostrarEstado()    
 
-    return render_template('procesando.html')
+    if(todoCorrecto):
+        return render_template('procesando.html')
+    else:
+        return render_template("principal.html", error="Error: Directorio no válido. El directorio de imágenes debe estar en la ruta base del usuario")
 
 
 
