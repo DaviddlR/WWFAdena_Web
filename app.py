@@ -38,23 +38,15 @@ app = Flask(__name__)
 
 estadoEjecucion = EstadoEjecucion()
 
-estadoEjecucion.ejecucionEnCurso = False
-
 
 # Página principal (acceder a URL)
 @app.route("/", methods=["POST", "GET"])
 def pantallaPrincipal():
+
     print("Entramos en panalla principal")
 
-    # La ejecucion ha sido interrumpida
-    if estadoEjecucion.ejecucionEnCurso:
-        # Hay que parar la ejecucion
-        estadoEjecucion.interrumpirEjecucion = True
-        print("------------ INTERRUMPIMOS EJECUCION ---------------")
-
-
-
     return render_template("principal.html")
+    #return render_template('procesando.html')
 
 
 # Página que se muestra durante el procesamiento.
@@ -89,7 +81,7 @@ def empezarTareaLarga():
     hilo.start()
     
 
-    return {"url":"/estadoTarea"}
+    return {"url":"/estadoTarea", "rutaDestino": estadoEjecucion.rutaDestino}
 
 # PROCESO EN SEGUNDO PLANO
 def tareaLarga():

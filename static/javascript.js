@@ -20,26 +20,5 @@ function validarFormulario(){
     
 }  
 
-// window.onpageshow = function(evt) {
-//     // If persisted then it is in the page cache, force a reload of the page.
-//     if (evt.persisted) {
-//         alert("reload")
-//         document.body.style.display = "none";
-//         location.reload();
-//     }
-// };
-
-
-
-// (function () {
-// 	window.onpageshow = function(event) {
-// 		if (event.persisted) {
-//             alert("AAAAA");
-// 			window.location.reload();
-            
-// 		}
-// 	};
-// })();
-
 
 

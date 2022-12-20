@@ -16,12 +16,55 @@ document.addEventListener('readystatechange', event => {
 
         fetch("/comenzarTarea", {method: "POST"})
         .then(res => res.json())
-        .then(res => actualizarTarea(res['url'], mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion));
+        .then(res => {
+            rutaDestino = res['rutaDestino']
+            actualizarTarea(res['url'], mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion, rutaDestino)
+        });
     }
     
  });
 
+function actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion, rutaDestino){
 
+    // Solicitar info a /estadoTarea
+    fetch(urlEstado)
+    .then(res => res.json())
+    .then(res => {
+
+        // Actualizamos la vista
+        mensajeClustering.textContent = res['mensajeClustering']
+        mensajeClasificacion.textContent = res['mensajeClasificacion']
+
+        barraClustering.setAttribute("style", "width: " + res["barraClustering"] + "%")
+        barraClasificacion.setAttribute("style", "width: " + res["barraClasificacion"] + "%")
+
+        if (res['mensajeClustering'] == "¡Hecho!"){
+            document.getElementById("loadingClustering").style.display = "none";
+        }
+
+        if (res['mensajeClasificacion'] == "¡Hecho!"){
+            document.getElementById("loadingClasificacion").style.display = "none";
+        }
+
+        // Comprobamos si la ejecución ha terminado
+        if(res['estado'] != 'FINALIZADO'){
+            // Volvemos a actualizar a los 500ms
+            setTimeout(function(){
+                actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion, rutaDestino)
+            }, 500)
+        } else {
+            // La ejecución ha finalizado
+            document.getElementById("botonVolver").disabled = false;
+
+            // TODO ruta destino
+            document.getElementById("listo").innerHTML = "Listo. Puedes encontrar la carpeta de resultados en"
+            document.getElementById("pDestino").innerHTML = rutaDestino
+        }
+    })
+}
+
+
+// Impedir volver atrás
 
 var _hash = "!";
 var noBackPlease = function () {
@@ -45,62 +88,4 @@ window.onhashchange = function () {
 window.onload = function () {
     
     noBackPlease();
-}
-
-
-//  $(window).on("keypress", function (e){
-//     if(e.keycode == "backspace") 
-//          e.preventDefault();
-// })
-
-//  window.addEventListener("beforeunload", function(event) {
-//     console.log("UNLOAD:1");
-//     //event.preventDefault();
-//     event.returnValue = "AA"; //"Any text"; //true; //false;
-//     //return null; //"Any text"; //true; //false;
-//   });
-
-// document.addEventListener('visibilitychange', function logData() {
-//     if (document.visibilityState === 'hidden') {
-//       alert("No te vallas")
-//     }
-//   });
-
-
-//TODO: Vuelve a ejecutarse solo si la tarea no ha terminado
-//TODO: Añadir a nivel general una etiqueta que muestre el estado (EN PROCESO, ERROR, FINALIZADA)
-function actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion){
-
-    // Solicitar info a /estadoTarea
-    fetch(urlEstado)
-    .then(res => res.json())
-    .then(res => {
-        mensajeClustering.textContent = res['mensajeClustering']
-        mensajeClasificacion.textContent = res['mensajeClasificacion']
-
-        barraClustering.setAttribute("style", "width: " + res["barraClustering"] + "%")
-        barraClasificacion.setAttribute("style", "width: " + res["barraClasificacion"] + "%")
-
-        if (res['mensajeClustering'] == "¡Hecho!"){
-            document.getElementById("loadingClustering").style.display = "none";
-        }
-
-        if (res['mensajeClasificacion'] == "¡Hecho!"){
-            document.getElementById("loadingClasificacion").style.display = "none";
-        }
-
-        if(res['estado'] != 'FINALIZADO'){
-            setTimeout(function(){
-                actualizarTarea(urlEstado, mensajeClustering, mensajeClasificacion, barraClustering, barraClasificacion)
-            }, 500)
-        } else {
-            // La ejecución ha finalizado
-            document.getElementById("botonVolver").disabled = false;
-        }
-    })
-    
-
-
-
-    // Actualizar el p con lo que devuelva
 }

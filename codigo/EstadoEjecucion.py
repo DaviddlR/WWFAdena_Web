@@ -31,7 +31,6 @@ class EstadoEjecucion:
         self.barraClasificacion = 0
         self.usaGPU = "..."
         self.estado = "..."
-        self.ejecucionEnCurso = False
 
 
     def mostrarEstado(self):
@@ -109,7 +108,7 @@ class EstadoEjecucion:
         # Carpeta donde se almacenarán los resultados
         now = datetime.now()
         fechaActual = now.strftime("%d-%m-%Y__%H-%M-%S")	
-        nombreCarpetaDestino = "AAA_Resultados_" + self.tarea.replace(" ","") + "_" + fechaActual
+        nombreCarpetaDestino = "00_Resultados_" + self.tarea.replace(" ","") + "_" + fechaActual
         urlDestino = os.path.join(self.rutaOrigen, nombreCarpetaDestino)
 
         self.rutaDestino = urlDestino

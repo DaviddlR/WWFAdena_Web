@@ -18,7 +18,6 @@ def comenzarDescarteVacias(estadoEjecucion):
     print("Descartando vacias...")
 
     # Inicializamos datos
-    estadoEjecucion.ejecucionEnCurso = True
     estadoEjecucion.estado = "INICIADA"
     estadoEjecucion.mensajeClustering = "Comenzando la ejecución"
     estadoEjecucion.mensajeClasificacion = "Esperando agrupamiento"
@@ -32,9 +31,7 @@ def comenzarDescarteVacias(estadoEjecucion):
     # Autoencoders + clasificación
     autoencoders(estadoEjecucion, carpetaTemporal)    
 
-    # Finalizamos la ejecución
-    estadoEjecucion.ejecucionEnCurso = False
-    
+    # Finalizamos la ejecución   
 
     end_time = time.time()
 
