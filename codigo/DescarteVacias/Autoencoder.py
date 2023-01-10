@@ -171,9 +171,11 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                 estadoEjecucion.actualizarBarraClasificacion(contador)
 
         print("FIN CLUSTER ", cluster)
+        del dataset
 
 
     estadoEjecucion.mensajeClasificacion = "¡Hecho!"
+    
         
         
 def moverImagen(origen, destino, mover):

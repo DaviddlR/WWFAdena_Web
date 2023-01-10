@@ -92,7 +92,7 @@ def clustering(estadoEjecucion, carpetaTemporal):
             rutaIMG = os.path.join(root, name)
 
             # Evitamos las imágenes que se han procesado en otras ejecuciones
-            if not "AAA_Resultados_" in rutaIMG:
+            if not "00_Resultados_" in rutaIMG:
                 contador += 1
 
                 img = cv.imread(rutaIMG)

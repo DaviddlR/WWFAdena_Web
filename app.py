@@ -17,6 +17,8 @@ from codigo.EstadoEjecucion import *
 from codigo.DescarteVacias.Correntropy import *
 from codigo.DescarteVacias.DescarteVacias import comenzarDescarteVacias
 
+import gc
+
 # Variables globales
 
 urlModelos = "./Modelos_Entrenados/"
@@ -66,7 +68,7 @@ def procesando():
     if(todoCorrecto):
         return render_template('procesando.html')
     else:
-        return render_template("principal.html", error="Error: Directorio no válido. El directorio de imágenes debe estar en la ruta base del usuario")
+        return render_template("principal.html", error="Error: Directorio no válido. El directorio de imágenes debe estar en la ruta base del usuario.")
 
 
 
@@ -76,7 +78,7 @@ def procesando():
 @app.route("/comenzarTarea", methods=["POST"])
 def empezarTareaLarga():
 
-    # TODO: empezar un hilo u otro según la tarea.
+    # Empezar un hilo u otro según la tarea.
     hilo = threading.Thread(target=lambda: tareaLarga())
     hilo.start()
     
@@ -86,6 +88,7 @@ def empezarTareaLarga():
 # PROCESO EN SEGUNDO PLANO
 def tareaLarga():
     comenzarDescarteVacias(estadoEjecucion)
+    gc.collect()  # Limpieza de memoria (créditos a ManuG)
 
 # Función para comprobar el estado de la tarea y actualizar mensajes.
 @app.route("/estadoTarea")

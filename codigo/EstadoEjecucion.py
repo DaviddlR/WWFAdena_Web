@@ -103,8 +103,6 @@ class EstadoEjecucion:
         if not os.path.isdir(self.rutaOrigen):
             return False
 
-        #self.rutaOrigen = urlBase + self.sp + directorio
-
         # Carpeta donde se almacenarán los resultados
         now = datetime.now()
         fechaActual = now.strftime("%d-%m-%Y__%H-%M-%S")	
@@ -112,16 +110,6 @@ class EstadoEjecucion:
         urlDestino = os.path.join(self.rutaOrigen, nombreCarpetaDestino)
 
         self.rutaDestino = urlDestino
-        
-
-        # if "\\" in urlBase:
-        #     print("Windows")
-        #     urlDestino = urlBase + "\\Airesultados"
-        #     self.sp = "\\"
-        # else:
-        #     print("Linux")
-        #     urlDestino = urlBase + "/Airesultados"
-        #     self.sp = "/"
 
         # Creamos carpetas de resultados
         rutaAnimales = os.path.join(urlDestino, "Animales")
@@ -164,7 +152,7 @@ class EstadoEjecucion:
 
                 rutaIMG = os.path.join(root, name)
 
-                if not "AAA_Resultados_" in rutaIMG:
+                if not "00_Resultados_" in rutaIMG:
                     contador += 1
 
         self.imagenesTotales = contador
