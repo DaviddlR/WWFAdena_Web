@@ -12,6 +12,8 @@ class EstadoEjecucion:
         self.version = ""
         self.sp = ""  # Este separador es dependiente del SO
         self.imagenesTotales = 0
+        self.fechaEjecucion = ""
+        self.horaEjecucion = ""
 
         # Parámetros de ejecución para descarte de imágenes vacías.
         self.rutaOrigen = ""
@@ -48,6 +50,12 @@ class EstadoEjecucion:
 
         f = open(rutaTXT, "w")
 
+        # Fecha de la ejecución
+        f.write("Fecha: " + self.fechaEjecucion + "\n")
+
+        # Hora de la ejecución
+        f.write("Hora: " + self.horaEjecucion + "\n")
+
         # Tarea
         f.write("Tarea: " + self.tarea + "\n")
 
@@ -79,7 +87,7 @@ class EstadoEjecucion:
         # Número de imágenes
         f.write("Número de imágenes: " + str(self.imagenesTotales) + "\n")
 
-        # Tiempo de ejecución????
+        # Tiempo de ejecución
         f.write("Tiempo de ejecución: " + tiempoEjecucion + "\n")
 
         f.close()
@@ -111,12 +119,17 @@ class EstadoEjecucion:
 
         self.rutaDestino = urlDestino
 
+        # Almacenamos fecha y hora de ejecución
+        fechaSeparado = fechaActual.split("__")
+        self.fechaEjecucion = fechaSeparado[0]
+        self.horaEjecucion = fechaSeparado[1].replace("-",":")
+
         # Creamos carpetas de resultados
         rutaAnimales = os.path.join(urlDestino, "Animales")
         rutaVacio = os.path.join(urlDestino, "Vacio")
         rutaDudosas = os.path.join(urlDestino, "Dudosas")
 
-        # TODO: Comprobar que no exista ya
+        # Comprobar que no exista ya
         os.mkdir(urlDestino)
 
         os.mkdir(rutaAnimales)
