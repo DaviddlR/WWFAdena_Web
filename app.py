@@ -6,8 +6,6 @@ import os
 
 import numpy as np
 
-# WLS - En window 11 viene por defecto.
-
 # Hilos
 import threading
 import time
@@ -25,14 +23,6 @@ urlModelos = "./Modelos_Entrenados/"
 modeloKmeans = "kmeansServidor.pkl"
 modelos_AE = ["AE_cluster0.h5", "AE_cluster1.h5", "AE_cluster2.h5", "AE_cluster3.h5", "AE_cluster4.h5", "AE_cluster5.h5", "AE_cluster6.h5"]
 modeloClasificadora = "MLP_2_20_150_Cluster.h5"
-
-# Hilo que controla la ejecución de tareas largas
-
-
-# Parámetros de configuración recogidos del formulario y estado de la ejecución
-# TODO: ¿Crear una clase para cada tipo de ejecución? (descarte, segmentación...)? O usar herencia??
-
-
 
 
 # Creación de la APP

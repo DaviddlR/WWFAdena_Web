@@ -106,11 +106,8 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
             print(filepath_carpeta)
             filepath = list()
             for file in filepath_carpeta:
-                #print(file)
                 file = file.split("\\")
-                #print(file)
                 file = file[1]
-                #print(file)
                 filepath.append(file)
 
             i = 0
@@ -120,9 +117,6 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                 # Aplicamos Autoencoders
                 original = carpeta.next()
                 rutaIMG = os.path.join(estadoEjecucion.rutaOrigen, filepath[i])
-                # print(estadoEjecucion.rutaOrigen)
-                # print(filepath[i])
-                # print(rutaIMG)
 
                 prediccion = autoencoder.predict(original)
 
@@ -163,8 +157,6 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
                         # Mover a carpeta animales
                         moverImagen(rutaIMG, estadoEjecucion.rutaAnimales, mover)
 
-                #TODO: Mover imagen original a carpeta correspondiente
-
 
                 i += 1
                 contador += 1
@@ -191,7 +183,6 @@ def checkGPU():
 
         try:
             model = tf.keras.models.load_model(urlModelos + modelos_AE[0], custom_objects={"correntropy" : correntropy})
-            #TODO: Cargar imagen y usarlo.
 
         except Exception as e:
             if e.__class__.__name__ == "ResourceExhaustedError":
