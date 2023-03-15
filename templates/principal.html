@@ -10,43 +10,84 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}">
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
     </head>
 
-    <body>
 
+    <body>
+        <input type="hidden" id="refresh" value="no">
         <div class="login-page">
             <div class="form">
                 <h1 style="text-align: center">Selección de parámetros</h1><br>
+
+                
+
+                <!-- <span>&#10003;</span> -->
+                
                 <form action="/procesando" method="POST" onsubmit="return validarFormulario()">
 
                     <h5 class="secciones">Qué tarea quieres hacer</h5>
-                    <div class="form-group">
+
+                    <div class="row">
+                    <div class="form-group col-md-9">
                         
                         <select class='form-select' id="modelo" name="modelo">
                             <option value="descarteVacias">Descartar vacías</option>
-                            <option value="segmentacion">Segmentación</option>
                         </select>
+
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        
+                        <select class='form-select' id="modelo" name="version">
+                            <option value="DV_V1">V.1</option>
+                        </select>
+
+                    </div>
+
+
                     </div>
                     <hr>
 
                     <h5 class="secciones">Selecciona el directorio donde se encuentran las imágenes</h5>
+                    <p style="color: rgb(209, 0, 0);">{{ error }}</p>
                     <input type="file" id="directorio" name="directorio" webkitdirectory directory multiple/>
                     <hr>
 
                     <h5 class="secciones">Configuración adicional</h5>
+
+                    <div class="form-radio">
+                        <input class="form-check-input" type="radio" id="moverimg" name="moverimg" value="mover" checked>
+                        <label class="form-check-label" for="moverimg">
+                            Mover imágenes
+                        </label>
+                    </div>
+
+                    <div class="form-radio">
+                        <input class="form-check-input" type="radio" id="copiarimg" name="moverimg" value="copiar">
+                        <label class="form-check-label" for="copiarimg">
+                            Copiar imágenes
+                        </label>
+                    </div>
+                    <br>
+
+
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="dudosas" name="dudosas">
                         <label class="form-check-label" for="dudosas">
                            Almacenar imágenes dudosas
                         </label>
                     </div>
-                    <br>
+                    
 
                     <div id="dudosasChecked" style="display: none">
-                        <p class="pSinMargen">Umbral</p>
-                        <input type="number" id="umbralDudosas" name="umbralDudosas" min="1" max="5" step=".1">
+                        <p class="pSinMargen">Umbral 
+                            <button class="btn" type="button" data-toggle="popover" data-trigger="hover" title="Umbral de imágenes dudosas" data-content="Probabilidad por encima de la cual una imagen deja de ser dudosa y se asigna a una categoría"><i class="bi bi-info-circle"></i></button>
+                            
+                        </p>
+                        
+                        <input type="number" id="umbralDudosas" name="umbralDudosas" value="0.5" min="0.5" max="1" step=".05">
                     </div>
                     
                     <br><br>
@@ -57,7 +98,7 @@
 
                     
                     
-                    <p><input type="submit" value="Enviar" ></p>
+                    <p><input type="submit" value="Comenzar"></p>
         
                 </form>
             </div>
@@ -86,6 +127,13 @@
                 }
             });
 
+        </script>
+
+        <!-- Activar popovers -->
+        <script>
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            })
         </script>
 
 
