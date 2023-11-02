@@ -31,7 +31,7 @@ def calcularMAE(original, reconstruccion):
     return np.mean(np.abs(original.astype("float") - reconstruccion.astype("float")))
 
 def calcularSSIM(original, reconstruccion):
-    return ssim(original, reconstruccion, channel_axis=2)
+    return ssim(original, reconstruccion, channel_axis=2, data_range=original.max() - original.min())
 
 
 
@@ -106,7 +106,7 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
             print(filepath_carpeta)
             filepath = list()
             for file in filepath_carpeta:
-                file = file.split("\\")
+                file = file.split(os.sep)
                 file = file[1]
                 filepath.append(file)
 

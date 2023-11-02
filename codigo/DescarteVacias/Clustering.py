@@ -29,7 +29,7 @@ channels = [0,1,2]
 x0 = 0
 y0 = 0
 x1 = 256
-y1 = 388
+y1 = 384
 
 
 def clustering(estadoEjecucion, carpetaTemporal):
@@ -112,7 +112,7 @@ def clustering(estadoEjecucion, carpetaTemporal):
 
                 # Aplicar clustering
                 indiceCluster = kmeansModel.predict(histograma_test)[0]
-                print("Indice cluster: ", indiceCluster)
+                #print("Indice cluster: ", indiceCluster)
 
                 # Segundo preprocesamiento (cortar barra inferior)
                 crop = resizedImg[x0:x1, y0:y1]
