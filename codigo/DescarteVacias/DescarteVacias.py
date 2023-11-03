@@ -10,8 +10,7 @@ import tempfile
 from codigo.DescarteVacias.Clustering import *
 from codigo.DescarteVacias.Autoencoder import *
 
-# TODO: Aquí creo que debería ir la creación de directorios temporales
-# TODO: Esta función comienza y acaba la ejecución. Modificar estado
+
 def comenzarDescarteVacias(estadoEjecucion):
     start_time = time.time()
 
@@ -23,20 +22,27 @@ def comenzarDescarteVacias(estadoEjecucion):
     estadoEjecucion.mensajeClasificacion = "Esperando agrupamiento"
 
     carpetaTemporal = tempfile.TemporaryDirectory()
-    print('Carpeta temporal ', carpetaTemporal)
 
-    # Preprocesamiento + clustering
-    clustering(estadoEjecucion, carpetaTemporal)
+    try:
+        print('Carpeta temporal ', carpetaTemporal)
 
-    # Autoencoders + clasificación
-    autoencoders(estadoEjecucion, carpetaTemporal)    
+        # Preprocesamiento + clustering
+        clustering(estadoEjecucion, carpetaTemporal)
 
-    # Finalizamos la ejecución   
+        # Autoencoders + clasificación
+        autoencoders(estadoEjecucion, carpetaTemporal)    
 
-    end_time = time.time()
+        # Finalizamos la ejecución   
 
-    sec = round(end_time - start_time)
-    tiempo = str(datetime.timedelta(seconds=sec))
-    estadoEjecucion.generarTXT(tiempo)
-    
-    estadoEjecucion.estado = "FINALIZADO"
+        end_time = time.time()
+
+        sec = round(end_time - start_time)
+        tiempo = str(datetime.timedelta(seconds=sec))
+        estadoEjecucion.generarTXT(tiempo)
+        
+        estadoEjecucion.estado = "FINALIZADO"
+
+    # Halla o no excepciones, borramos la carpeta temporal cuando acaba la ejecución
+    finally:
+        print("---------------- BORRAMOS CARPETA TEMPORAL ----------------")
+        carpetaTemporal.cleanup()

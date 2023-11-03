@@ -6,30 +6,29 @@ import pickle
 import cv2 as cv
 
 # Variables globales
-rutaModeloKmeans = "./Modelos_Entrenados/kmeansServidor.pkl"
+rutaModeloKmeans = "./Modelos_Entrenados/KmeansImagenesNorm7_ESTE.pkl"
 
-# Tamaño del histograma (puede ser reducido)
-#h_bins = 60
-r_bins = 85
-g_bins = 85
-b_bins = 85
-hist_size = [r_bins, g_bins, b_bins]  # Tamaño que tendrá el histograma (podríamos reducirlos / ampliarlos hasta 180, 256)
+rutaModeloKmeans = os.path.relpath(rutaModeloKmeans)
 
-# Rango de valores de cada canal que encontramos en la imagen
-#h_ranges = [0,180]
-r_ranges = [0,256]
-g_ranges = [0, 256]
-b_ranges = [0, 256]
-ranges = r_ranges + g_ranges + b_ranges
-
-# 3 canales (HSV o BGR)
-channels = [0,1,2]
-
-# Recortado de imagenes
+# Recortado de imagenes para preprocesamiento
 x0 = 0
 y0 = 0
-x1 = 256
-y1 = 384
+alto = 256
+ancho = 384
+
+numeroDeCanales = 3  # RGB
+
+
+def ecualizarHistograma(img):
+    img_yuv = cv.cvtColor(img, cv.COLOR_BGR2YUV)
+
+    # equalize the histogram of the Y channel
+    img_yuv[:,:,0] = cv.equalizeHist(img_yuv[:,:,0])
+
+    # convert the YUV image back to RGB format
+    img = cv.cvtColor(img_yuv, cv.COLOR_YUV2BGR)
+
+    return img
 
 
 def clustering(estadoEjecucion, carpetaTemporal):
@@ -72,7 +71,7 @@ def clustering(estadoEjecucion, carpetaTemporal):
     os.mkdir(cluster5)
     os.mkdir(cluster6)
 
-    # Cargar modelo Kmeans (kmeansPRUEBA.ipynb)
+    # Cargar modelo Kmeans
     kmeansModel = pickle.load(open(rutaModeloKmeans, "rb"))
     centroids = kmeansModel.cluster_centers_
     print(centroids.shape)
@@ -86,8 +85,6 @@ def clustering(estadoEjecucion, carpetaTemporal):
 
         for name in files:
 
-            
-
             # Obtenemos la ruta de la imagen
             rutaIMG = os.path.join(root, name)
 
@@ -95,34 +92,30 @@ def clustering(estadoEjecucion, carpetaTemporal):
             if not "00_Resultados_" in rutaIMG:
                 contador += 1
 
+                # Cargamos la imagen
                 img = cv.imread(rutaIMG)
 
-                # Preprocesamiento: Reducir tamaño
-                resizedImg = rescaleFrame(img, 384, 288)
+                # Preprocesamiento: Reducir tamaño, normalizar y adecuar para clustering
+                resizedImg = rescaleFrame(img, ancho, alto)
 
-                # Modificamos espacio de color --> NO
-                #resizedImg = cv.cvtColor(resizedImg, cv.COLOR_BGR2RGB)
-
-                # Calcular histograma y normalizar
-                histograma_test = cv.calcHist([img], channels, None, hist_size, ranges, accumulate = False)
-                cv.normalize(histograma_test, histograma_test, alpha = 0, beta = 1, norm_type = cv.NORM_MINMAX)
-
-                histograma_test = histograma_test.reshape(r_bins*g_bins*b_bins)
-                histograma_test = histograma_test.reshape(1,-1)
+                resizedImgNorm = cv.normalize(resizedImg, None, alpha=0, beta=1, norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
+                resizedImgNorm = resizedImgNorm.reshape(ancho * alto * numeroDeCanales)
+                resizedImgNorm = resizedImgNorm.reshape(1,-1)
 
                 # Aplicar clustering
-                indiceCluster = kmeansModel.predict(histograma_test)[0]
+                indiceCluster = kmeansModel.predict(resizedImgNorm)[0]
                 #print("Indice cluster: ", indiceCluster)
-
-                # Segundo preprocesamiento (cortar barra inferior)
-                crop = resizedImg[x0:x1, y0:y1]
 
                 # Una vez tenemos el indice del cluster, copiar la imagen
                 rutaClusterImagen = os.path.join(carpetaTemporal, str(indiceCluster),"imgs",name)
-                
-                cv.imwrite(rutaClusterImagen, crop)
 
+                # Ecualizamos la imagen para luego los AE
+                imagenEcualizada = ecualizarHistograma(resizedImg)
+                cv.imwrite(rutaClusterImagen, imagenEcualizada)
+
+                # Actualizamos la barra de clustering
                 estadoEjecucion.actualizarBarraClustering(contador)
+
 
     estadoEjecucion.mensajeClustering = "¡Hecho!"
 
