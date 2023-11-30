@@ -9,7 +9,7 @@ import time
 
 import pickle
 
-from modeloAE import getRobustAE_decreaseFilters
+from codigo.DescarteVacias.modeloAE import getRobustAE_decreaseFilters
 
 
 # Variables globales
@@ -64,7 +64,7 @@ def calcularMAE(original, reconstruccion):
     return mae(original, reconstruccion).numpy()
 
 def calcularSSIM(original, reconstruccion):
-    return ssim(original, reconstruccion, channel_axis=2, data_range=original.max() - original.min())
+    return ssim(original, reconstruccion, channel_axis=2, data_range=1)
 
 
 
@@ -138,8 +138,8 @@ def aplicarClasificacion(estadoEjecucion, carpetaTemporal):
         if carpeta.n > 0:
 
             # Hay imágenes -> cargamos Autoencoder
-            model = getRobustAE_decreaseFilters((IMG_HEIGHT, IMG_WIDTH, 3))
-            autoencoder = model.load_weights(os.path.relpath(urlModelos + modelos_AE[cluster]))
+            autoencoder = getRobustAE_decreaseFilters((IMG_HEIGHT, IMG_WIDTH, 3))
+            autoencoder.load_weights(os.path.relpath(urlModelos + modelos_AE[cluster]))
             # NOTA --> No hace falta cargar correntropy para inferencia
 
             # autoencoder = tf.keras.models.load_model(urlModelos + modelos_AE[cluster], custom_objects={"correntropy" : correntropy})
